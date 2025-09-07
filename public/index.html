@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Google Proxy Demo</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f9fa; }
+    .centered { display: flex; flex-direction: column; align-items: center; margin-top: 100px; }
+    input[type="text"] { width: 300px; padding: 12px; font-size: 18px; }
+    button { padding: 10px 24px; font-size: 16px; margin-top: 10px; }
+    #results { margin-top: 40px; width: 80vw; max-width: 900px; background: #fff; border-radius: 8px; padding: 20px; }
+    img { margin-bottom: 40px; }
+  </style>
+</head>
+<body>
+  <div class="centered">
+    <img src="/proxy?url=https://www.google.com/images/branding/googlelogo/1x/googlelogo_light_color_92x30dp.png" alt="Google" width="184" height="60">
+    <form id="searchForm">
+      <input type="text" id="query" name="q" placeholder="Поиск в Google через Cloudflare Proxy">
+      <button type="submit">Поиск</button>
+    </form>
+    <div id="results"></div>
+  </div>
+  <script>
+    const form = document.getElementById("searchForm");
+    const results = document.getElementById("results");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const q = document.getElementById("query").value.trim();
+      if (!q) return;
+      results.innerHTML = "Загрузка...";
+      try {
+        const resp = await fetch(`/proxy?url=${encodeURIComponent("https://www.google.com/search?q=" + encodeURIComponent(q))}`);
+        const html = await resp.text();
+        results.innerHTML = html;
+      } catch (err) {
+        results.innerHTML = "Ошибка загрузки: " + err;
+      }
+    });
+  </script>
+</body>
+</html>
